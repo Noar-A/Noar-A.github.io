@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moderator Panel - Legacy Archive</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'MinionPro-Regular', 'Crimson Text', serif;
+            background-color: #1a1a1a;
+            color: #FFA500;
+            padding: 30px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #FFA500;
+        }
+
+        header h1 {
+            font-size: 2em;
+            font-weight: 400;
+            letter-spacing: 2px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: none;
+            border: 1px solid #FFA500;
+            color: #FFA500;
+            padding: 12px 24px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+            border-radius: 3px;
+        }
+
+        button:hover {
+            background-color: #FFA500;
+            color: #1a1a1a;
+        }
+
+        button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        button:disabled:hover {
+            background: none;
+            color: #FFA500;
+        }
+
+        .editor-section {
+            display: none;
+            background-color: #0d0d0d;
+            border: 1px solid #FFA500;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 5px;
+        }
+
+        .editor-section.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+            opacity: 0.9;
+        }
+
+        input[type="text"],
+        textarea {
+            width: 100%;
+            background-color: #000;
+            border: 1px solid #FFA500;
+            color: #FFA500;
+            padding: 12px;
+            font-family: inherit;
+            font-size: 1em;
+            border-radius: 3px;
+        }
+
+        textarea {
+            min-height: 300px;
+            resize: vertical;
+            line-height: 1.8;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #FFB733;
+            box-shadow: 0 0 5px rgba(255, 165, 0, 0.3);
+        }
+
+        .stories-list {
+            display: grid;
+            gap: 20px;
+        }
+
+        .story-item {
+            background-color: #0d0d0d;
+            border: 1px solid #FFA500;
+            padding: 20px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .story-info {
+            flex: 1;
+        }
+
+        .story-title {
+            font-size: 1.2em;
+            margin-bottom: 8px;
+        }
+
+        .story-preview {
+            opacity: 0.6;
+            font-size: 0.9em;
+        }
+
+        .story-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .story-actions button {
+            padding: 8px 16px;
+            font-size: 0.85em;
+        }
+
+        .import-export {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #0d0d0d;
+            border: 1px solid #FFA500;
+            border-radius: 5px;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .file-input-wrapper input[type="file"] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .instructions {
+            background-color: #0d0d0d;
+            border: 1px solid #FFA500;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 5px;
+            opacity: 0.8;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+
+        .instructions h3 {
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .success-message,
+        .error-message {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 3px;
+            display: none;
+        }
+
+        .success-message {
+            background-color: rgba(0, 255, 0, 0.1);
+            border: 1px solid #00ff00;
+            color: #00ff00;
+        }
+
+        .error-message {
+            background-color: rgba(255, 0, 0, 0.1);
+            border: 1px solid #ff0000;
+            color: #ff0000;
+        }
+
+        .success-message.show,
+        .error-message.show {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .story-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .story-actions {
+                margin-top: 15px;
+                width: 100%;
+            }
+
+            .story-actions button {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Moderator Panel</h1>
+        </header>
+
+        <div class="success-message" id="successMessage"></div>
+        <div class="error-message" id="errorMessage"></div>
+
+        <div class="instructions">
+            <h3>Instructions:</h3>
+            <p><strong>Add Story:</strong> Create a new story card with title and content.</p>
+            <p><strong>Export Data:</strong> Download all stories as a JSON file. Keep this safe as your backup.</p>
+            <p><strong>Import Data:</strong> Upload a previously exported JSON file to restore stories.</p>
+            <p><strong>Font Upload:</strong> To use MinionPro-Regular font, you need to add the font files to your hosting. The site will fall back to Crimson Text if not available.</p>
+        </div>
+
+        <div class="import-export">
+            <button onclick="exportData()">📥 Export Data</button>
+            <div class="file-input-wrapper">
+                <button>📤 Import Data</button>
+                <input type="file" id="fileInput" accept=".json" onchange="importData(event)">
+            </div>
+            <button onclick="window.open('index.html', '_blank')">👁️ View Reader Site</button>
+        </div>
+
+        <div class="controls">
+            <button onclick="showAddStory()">➕ Add New Story</button>
+            <button onclick="clearAllStories()">🗑️ Clear All Stories</button>
+        </div>
+
+        <div class="editor-section" id="editorSection">
+            <h2 id="editorTitle">Add New Story</h2>
+            <form onsubmit="saveStory(event)">
+                <div class="form-group">
+                    <label for="storyTitle">Story Title</label>
+                    <input type="text" id="storyTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="storyContent">Story Content (use line breaks for paragraphs)</label>
+                    <textarea id="storyContent" required></textarea>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button type="submit">💾 Save Story</button>
+                    <button type="button" onclick="cancelEdit()">✖️ Cancel</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="stories-list" id="storiesList"></div>
+    </div>
+
+    <script>
+        let editingIndex = null;
+
+        function showMessage(message, isError = false) {
+            const successEl = document.getElementById('successMessage');
+            const errorEl = document.getElementById('errorMessage');
+            
+            if (isError) {
+                errorEl.textContent = message;
+                errorEl.classList.add('show');
+                successEl.classList.remove('show');
+            } else {
+                successEl.textContent = message;
+                successEl.classList.add('show');
+                errorEl.classList.remove('show');
+            }
+
+            setTimeout(() => {
+                successEl.classList.remove('show');
+                errorEl.classList.remove('show');
+            }, 3000);
+        }
+
+        function getStories() {
+            return JSON.parse(localStorage.getItem('legacyStories') || '[]');
+        }
+
+        function saveStories(stories) {
+            localStorage.setItem('legacyStories', JSON.stringify(stories));
+        }
+
+        function showAddStory() {
+            editingIndex = null;
+            document.getElementById('editorTitle').textContent = 'Add New Story';
+            document.getElementById('storyTitle').value = '';
+            document.getElementById('storyContent').value = '';
+            document.getElementById('editorSection').classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function cancelEdit() {
+            editingIndex = null;
+            document.getElementById('editorSection').classList.remove('active');
+        }
+
+        function saveStory(event) {
+            event.preventDefault();
+            
+            const title = document.getElementById('storyTitle').value.trim();
+            const content = document.getElementById('storyContent').value.trim();
+
+            if (!title || !content) {
+                showMessage('Please fill in all fields', true);
+                return;
+            }
+
+            const stories = getStories();
+            const story = { title, content, createdAt: new Date().toISOString() };
+
+            if (editingIndex !== null) {
+                stories[editingIndex] = { ...stories[editingIndex], ...story, updatedAt: new Date().toISOString() };
+                showMessage('Story updated successfully');
+            } else {
+                stories.push(story);
+                showMessage('Story added successfully');
+            }
+
+            saveStories(stories);
+            cancelEdit();
+            renderStories();
+        }
+
+        function editStory(index) {
+            const stories = getStories();
+            const story = stories[index];
+            
+            editingIndex = index;
+            document.getElementById('editorTitle').textContent = 'Edit Story';
+            document.getElementById('storyTitle').value = story.title;
+            document.getElementById('storyContent').value = story.content;
+            document.getElementById('editorSection').classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function deleteStory(index) {
+            if (!confirm('Are you sure you want to delete this story? This cannot be undone.')) {
+                return;
+            }
+
+            const stories = getStories();
+            stories.splice(index, 1);
+            saveStories(stories);
+            renderStories();
+            showMessage('Story deleted');
+        }
+
+        function clearAllStories() {
+            if (!confirm('Are you sure you want to delete ALL stories? This cannot be undone. Make sure you have exported your data first!')) {
+                return;
+            }
+
+            if (!confirm('This is your last warning. ALL stories will be permanently deleted. Continue?')) {
+                return;
+            }
+
+            localStorage.removeItem('legacyStories');
+            renderStories();
+            showMessage('All stories cleared');
+        }
+
+        function exportData() {
+            const stories = getStories();
+            
+            if (stories.length === 0) {
+                showMessage('No stories to export', true);
+                return;
+            }
+
+            const dataStr = JSON.stringify(stories, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `legacy-archive-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            URL.revokeObjectURL(url);
+            
+            showMessage('Data exported successfully');
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const stories = JSON.parse(e.target.result);
+                    
+                    if (!Array.isArray(stories)) {
+                        throw new Error('Invalid file format');
+                    }
+
+                    if (getStories().length > 0) {
+                        if (!confirm('This will replace all current stories. Continue?')) {
+                            return;
+                        }
+                    }
+
+                    saveStories(stories);
+                    renderStories();
+                    showMessage(`Successfully imported ${stories.length} stories`);
+                } catch (error) {
+                    showMessage('Error importing file. Make sure it\'s a valid JSON file.', true);
+                }
+            };
+            reader.readAsText(file);
+            
+            // Reset file input
+            event.target.value = '';
+        }
+
+        function createExcerpt(text, wordLimit = 15) {
+            const words = text.split(' ');
+            if (words.length <= wordLimit) return text;
+            return words.slice(0, wordLimit).join(' ') + '...';
+        }
+
+        function renderStories() {
+            const container = document.getElementById('storiesList');
+            const stories = getStories();
+
+            if (stories.length === 0) {
+                container.innerHTML = '<div style="text-align: center; padding: 40px; opacity: 0.5;">No stories yet. Add your first story above.</div>';
+                return;
+            }
+
+            container.innerHTML = stories.map((story, index) => `
+                <div class="story-item">
+                    <div class="story-info">
+                        <div class="story-title">${story.title}</div>
+                        <div class="story-preview">${createExcerpt(story.content, 15)}</div>
+                    </div>
+                    <div class="story-actions">
+                        <button onclick="editStory(${index})">✏️ Edit</button>
+                        <button onclick="deleteStory(${index})">🗑️ Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Initialize
+        renderStories();
+    </script>
+</body>
+</html>
