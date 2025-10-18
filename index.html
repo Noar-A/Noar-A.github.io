@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legacy Archive</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'MinionPro-Regular', 'Crimson Text', serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            min-height: 100vh;
+            padding: 45px;
+            padding-bottom: 100px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body.day-mode {
+            background-color: #DCDBD1;
+            color: #393831;
+        }
+
+        body.night-mode {
+            background-color: #000000;
+            color: #FFA500;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            font-weight: 400;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: none;
+            border: 1px solid currentColor;
+            color: inherit;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+            border-radius: 3px;
+        }
+
+        .theme-toggle:hover {
+            opacity: 0.7;
+        }
+
+        .cards-container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .card {
+            border: 1px solid currentColor;
+            padding: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0.85;
+        }
+
+        .card:hover {
+            opacity: 1;
+            transform: translateX(5px);
+        }
+
+        .card-title {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .card-excerpt {
+            line-height: 1.8;
+            opacity: 0.8;
+        }
+
+        .card-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+            line-height: 1.8;
+            text-align: justify;
+            margin-top: 0;
+        }
+
+        .card.expanded .card-content {
+            max-height: 5000px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid currentColor;
+        }
+
+        .card.expanded .card-excerpt {
+            display: none;
+        }
+
+        .card-content p {
+            margin-bottom: 20px;
+        }
+
+        .social-icons {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 30px;
+            z-index: 1000;
+        }
+
+        .social-icons a {
+            color: inherit;
+            text-decoration: none;
+            opacity: 0.6;
+            transition: opacity 0.3s ease;
+            font-size: 24px;
+        }
+
+        .social-icons a:hover {
+            opacity: 1;
+        }
+
+        .social-icons svg {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            opacity: 0.5;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 25px;
+                padding-bottom: 100px;
+            }
+
+            header h1 {
+                font-size: 2em;
+            }
+
+            .theme-toggle {
+                top: 20px;
+                right: 20px;
+                padding: 8px 15px;
+            }
+        }
+    </style>
+</head>
+<body class="night-mode">
+    <button class="theme-toggle" onclick="toggleTheme()">
+        <span class="theme-text">Day Mode</span>
+    </button>
+
+    <div class="container">
+        <header>
+            <h1>Legacy Archive</h1>
+        </header>
+
+        <div class="cards-container" id="cardsContainer">
+            <div class="empty-state">
+                <p>No stories yet. The archive awaits.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="social-icons">
+        <a href="https://x.com/Noar_AA?t=DD9fz3W_vZMh_eSztOxRWA&s=09" target="_blank" rel="noopener" title="X (Twitter)">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+            </svg>
+        </a>
+        <a href="https://www.reddit.com/u/Noar_A/s/AjVgmby69j" target="_blank" rel="noopener" title="Reddit">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/>
+            </svg>
+        </a>
+    </div>
+
+    <script>
+        // Theme management
+        function toggleTheme() {
+            const body = document.body;
+            const themeText = document.querySelector('.theme-text');
+            
+            if (body.classList.contains('night-mode')) {
+                body.classList.remove('night-mode');
+                body.classList.add('day-mode');
+                themeText.textContent = 'Night Mode';
+                localStorage.setItem('theme', 'day');
+            } else {
+                body.classList.remove('day-mode');
+                body.classList.add('night-mode');
+                themeText.textContent = 'Day Mode';
+                localStorage.setItem('theme', 'night');
+            }
+        }
+
+        // Load saved theme
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'night';
+            const body = document.body;
+            const themeText = document.querySelector('.theme-text');
+            
+            if (savedTheme === 'day') {
+                body.classList.remove('night-mode');
+                body.classList.add('day-mode');
+                themeText.textContent = 'Night Mode';
+            } else {
+                body.classList.remove('day-mode');
+                body.classList.add('night-mode');
+                themeText.textContent = 'Day Mode';
+            }
+        }
+
+        // Card management
+        function createExcerpt(text, wordLimit = 20) {
+            const words = text.split(' ');
+            if (words.length <= wordLimit) return text;
+            return words.slice(0, wordLimit).join(' ') + '...';
+        }
+
+        function renderCards() {
+            const container = document.getElementById('cardsContainer');
+            const stories = JSON.parse(localStorage.getItem('legacyStories') || '[]');
+            
+            if (stories.length === 0) {
+                container.innerHTML = '<div class="empty-state"><p>No stories yet. The archive awaits.</p></div>';
+                return;
+            }
+
+            container.innerHTML = stories.map((story, index) => `
+                <div class="card" onclick="toggleCard(${index})">
+                    <div class="card-title">${story.title}</div>
+                    <div class="card-excerpt">${createExcerpt(story.content, 20)}</div>
+                    <div class="card-content">
+                        ${story.content.split('\n').map(p => p.trim() ? `<p>${p}</p>` : '').join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleCard(index) {
+            const cards = document.querySelectorAll('.card');
+            cards[index].classList.toggle('expanded');
+        }
+
+        // Initialize
+        loadTheme();
+        renderCards();
+    </script>
+</body>
+  </html>
